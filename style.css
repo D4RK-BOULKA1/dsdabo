@@ -73,11 +73,22 @@ html {
   font-family: var(--font-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  position: relative;
   background-color: var(--color-white);
+}
+
+main, header, footer, section, aside {
+  max-width: 100% !important;
+  overflow-x: clip;
 }
 
 img, video {
@@ -184,6 +195,8 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-full);
   transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
   white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .btn:hover {
@@ -634,6 +647,7 @@ h1, h2, h3, h4, h5, h6 {
   top: 0;
   right: -320px;
   width: 300px;
+  max-width: 85vw;
   height: 100vh;
   background-color: var(--color-white);
   z-index: 10000;
@@ -641,11 +655,15 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   padding: 24px;
-  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .mobile-drawer.open {
   right: 0;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .mobile-drawer-header {
@@ -2350,23 +2368,187 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @media (max-width: 768px) {
+  /* Masquer la top-bar sur mobile pour dégager la vue */
   .top-bar {
-    display: none;
+    display: none !important;
+  }
+
+  /* Conteneur fluide strict sans débordement */
+  .container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* En-tête mobile ultra-propre et compact */
+  .main-header {
+    padding: 8px 0;
+  }
+
+  .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .header-logo-img {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .brand-title {
+    font-size: 0.60rem;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+  }
+
+  .brand-subtitle {
+    font-size: 1.15rem;
+    white-space: nowrap;
+    line-height: 1.1;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Masquer le gros bouton inscription sur le header mobile (déjà dans le menu burger & hero) */
+  .header-actions .nav-cta {
+    display: none !important;
+  }
+
+  /* Bouton WhatsApp transformé en pastille ronde élégante */
+  .btn-whatsapp-header {
+    padding: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .btn-whatsapp-header .btn-text {
-    display: none;
+    display: none !important;
+  }
+
+  .btn-whatsapp-header svg {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  .menu-toggle {
+    width: 28px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  /* Hero Section sur Mobile */
+  .hero-section {
+    padding: 35px 0 50px 0;
+  }
+
+  .hero-badge {
+    font-size: 0.74rem;
+    padding: 5px 12px;
+    margin-bottom: 16px;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .hero-slogan {
+    font-size: 1.85rem;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    word-break: break-word;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .hero-cta-group {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    padding: 13px 18px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+  }
+
+  .hero-highlights {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Cartes flottantes cachées sur mobile pour éviter tout débordement */
+  .floating-card {
+    display: none !important;
+  }
+
+  /* Section Statistiques */
+  .stats-section {
+    padding: 40px 0;
   }
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
   }
 
   .stat-card {
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 16px;
+    padding-bottom: 14px;
+  }
+
+  .stat-number-wrapper {
+    font-size: 2.1rem;
+  }
+
+  /* Carrousel */
+  .slideshow-section {
+    padding: 60px 0;
   }
 
   .slide-item {
@@ -2375,42 +2557,138 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .slide-image-box {
-    height: 280px;
+    height: 240px;
   }
 
   .slide-caption {
-    padding: 24px 20px;
+    padding: 20px 16px;
   }
 
   .slide-heading {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 
-  .features-grid {
-    grid-template-columns: 1fr;
+  .slider-btn {
+    width: 38px;
+    height: 38px;
   }
 
-  .cycles-grid {
-    grid-template-columns: 1fr;
+  .slider-prev {
+    left: 8px;
   }
 
-  .prodiges-grid {
-    grid-template-columns: 1fr;
+  .slider-next {
+    right: 8px;
   }
 
-  .reviews-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-grid {
-    grid-template-columns: 1fr;
-  }
-
+  /* Grilles sur 1 colonne */
+  .features-grid,
+  .cycles-grid,
+  .prodiges-grid,
+  .reviews-grid,
+  .contact-grid,
   .footer-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 20px;
   }
 
-  .floating-card {
-    display: none;
+  .feature-card,
+  .cycle-card,
+  .review-card,
+  .contact-info-card {
+    padding: 24px 18px !important;
+  }
+
+  /* Section Prodiges & Vidéos */
+  .prodiges-section {
+    padding: 60px 0;
+  }
+
+  .video-info {
+    padding: 20px 16px;
+  }
+
+  .video-title {
+    font-size: 1.15rem;
+  }
+
+  /* Appel à l'action Prodiges : Fixation stricte anti-débordement */
+  .prodiges-cta {
+    padding: 22px 14px !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .prodiges-cta-text {
+    font-size: 0.98rem;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  .prodiges-cta .btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    padding: 14px 16px !important;
+    font-size: 0.92rem !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Bouton Flottant WhatsApp */
+  .floating-contact {
+    bottom: 16px;
+    right: 16px;
+    gap: 10px;
+  }
+
+  .btn-float-whatsapp {
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-float-whatsapp svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .float-tooltip {
+    display: none !important;
+  }
+
+  .btn-scroll-top {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* Modal WhatsApp */
+  .whatsapp-modal {
+    width: 94vw;
+    max-width: 94vw;
+  }
+
+  .modal-body {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .quick-topics {
+    gap: 6px;
+  }
+
+  .topic-chip {
+    font-size: 0.76rem;
+    padding: 5px 10px;
+  }
+
+  .map-frame-wrapper {
+    min-height: 280px;
+  }
+
+  .main-footer {
+    padding-top: 45px;
   }
 }
