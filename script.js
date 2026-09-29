@@ -1,74 +1,45 @@
 /**
- * ==========================================================================
- * ÉCOLE PRIVÉE MODERNE DS DABO - SCRIPT JAVASCRIPT OFFICIEL
- * Interactivité complète, carrousel 8 diapositives, vidéos prodiges,
- * FAQ accordéon, modal WhatsApp et animations d'apparition fluides.
- * ==========================================================================
+ * ÉCOLE PRIVÉE MODERNE DS DABO - SCRIPT JAVASCRIPT
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Constantes globales
-  const WHATSAPP_PHONE = '22378045050'; // Numéro officiel DS DABO
-  const SLIDE_DURATION = 5000; // 5 secondes par diapositive
+  const WHATSAPP_PHONE = '22378045050';
+  const SLIDE_DURATION = 5000;
 
-  /* ------------------------------------------------------------------------
-     1. ÉCRAN DE CHARGEMENT ANIMÉ (PRELOADER)
-     ------------------------------------------------------------------------ */
+  /* 1. PRELOADER */
   const preloader = document.getElementById('preloader');
-  
   const hidePreloader = () => {
     if (preloader && !preloader.classList.contains('fade-out')) {
       preloader.classList.add('fade-out');
-      setTimeout(() => {
-        preloader.style.display = 'none';
-      }, 600);
+      setTimeout(() => { preloader.style.display = 'none'; }, 600);
     }
   };
-
-  // Masquer le preloader une fois la page entièrement chargée ou après 1.8s
   window.addEventListener('load', hidePreloader);
   setTimeout(hidePreloader, 1800);
 
-  /* ------------------------------------------------------------------------
-     2. GESTION DU HEADER STICKY & SCROLL TO TOP
-     ------------------------------------------------------------------------ */
+  /* 2. HEADER STICKY & SCROLL TOP */
   const mainHeader = document.getElementById('mainHeader');
   const scrollTopBtn = document.getElementById('scrollTopBtn');
 
   window.addEventListener('scroll', () => {
     const scrollPos = window.scrollY;
-
-    // Header sticky shadow
     if (mainHeader) {
-      if (scrollPos > 30) {
-        mainHeader.classList.add('scrolled');
-      } else {
-        mainHeader.classList.remove('scrolled');
-      }
+      if (scrollPos > 30) mainHeader.classList.add('scrolled');
+      else mainHeader.classList.remove('scrolled');
     }
-
-    // Bouton de remontée en haut
     if (scrollTopBtn) {
-      if (scrollPos > 400) {
-        scrollTopBtn.classList.add('visible');
-      } else {
-        scrollTopBtn.classList.remove('visible');
-      }
+      if (scrollPos > 400) scrollTopBtn.classList.add('visible');
+      else scrollTopBtn.classList.remove('visible');
     }
   }, { passive: true });
 
   if (scrollTopBtn) {
     scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
-  /* ------------------------------------------------------------------------
-     3. TIROIR DE NAVIGATION MOBILE & MENU BURGER
-     ------------------------------------------------------------------------ */
+  /* 3. TIROIR MOBILE */
   const menuToggle = document.getElementById('menuToggle');
   const mobileDrawer = document.getElementById('mobileDrawer');
   const drawerClose = document.getElementById('drawerClose');
@@ -84,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = 'hidden';
     }
   };
-
   const closeDrawer = () => {
     if (mobileDrawer && drawerOverlay) {
       mobileDrawer.classList.remove('open');
@@ -94,45 +64,32 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
     }
   };
-
   if (menuToggle) menuToggle.addEventListener('click', openDrawer);
   if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
   if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+  drawerLinks.forEach(link => link.addEventListener('click', closeDrawer));
 
-  drawerLinks.forEach(link => {
-    link.addEventListener('click', closeDrawer);
-  });
-
-  /* ------------------------------------------------------------------------
-     4. LIENS ACTIFS DE NAVIGATION (SCROLLSPY)
-     ------------------------------------------------------------------------ */
+  /* 4. SCROLLSPY */
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
 
   const updateActiveNavLink = () => {
     const scrollY = window.pageYOffset + 120;
-
     sections.forEach(section => {
       const sectionHeight = section.offsetHeight;
       const sectionTop = section.offsetTop;
       const sectionId = section.getAttribute('id');
-
       if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
         navLinks.forEach(link => {
           link.classList.remove('active');
-          if (link.getAttribute('href') === `#${sectionId}`) {
-            link.classList.add('active');
-          }
+          if (link.getAttribute('href') === `#${sectionId}`) link.classList.add('active');
         });
       }
     });
   };
-
   window.addEventListener('scroll', updateActiveNavLink, { passive: true });
 
-  /* ------------------------------------------------------------------------
-     5. CARROUSEL HAUTE PERFORMANCE (SLIDES 1 À 8)
-     ------------------------------------------------------------------------ */
+  /* 5. CARROUSEL GALERIE (SLIDES 1 À 8) */
   const slides = document.querySelectorAll('.slide-item');
   const sliderPrev = document.getElementById('sliderPrev');
   const sliderNext = document.getElementById('sliderNext');
@@ -146,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let progressInterval = null;
   let progressStartTime = 0;
 
-  // Création dynamique des puces (dots) pour les 8 slides
   if (sliderDotsContainer && totalSlides > 0) {
     sliderDotsContainer.innerHTML = '';
     for (let i = 0; i < totalSlides; i++) {
@@ -155,105 +111,61 @@ document.addEventListener('DOMContentLoaded', () => {
       if (i === 0) dot.classList.add('active');
       dot.setAttribute('aria-label', `Aller à la diapositive ${i + 1}`);
       dot.dataset.index = i;
-      dot.addEventListener('click', () => {
-        goToSlide(i);
-        restartAutoPlay();
-      });
+      dot.addEventListener('click', () => { goToSlide(i); restartAutoPlay(); });
       sliderDotsContainer.appendChild(dot);
     }
   }
 
   const updateDots = (index) => {
-    const dots = document.querySelectorAll('.slider-dot');
-    dots.forEach((dot, idx) => {
-      if (idx === index) {
-        dot.classList.add('active');
-      } else {
-        dot.classList.remove('active');
-      }
+    document.querySelectorAll('.slider-dot').forEach((dot, idx) => {
+      if (idx === index) dot.classList.add('active');
+      else dot.classList.remove('active');
     });
   };
 
   const goToSlide = (index) => {
     if (totalSlides === 0) return;
-
     slides[currentSlide].classList.remove('active');
     currentSlide = (index + totalSlides) % totalSlides;
     slides[currentSlide].classList.add('active');
-
     updateDots(currentSlide);
     resetProgressBar();
   };
+  const nextSlide = () => goToSlide(currentSlide + 1);
+  const prevSlide = () => goToSlide(currentSlide - 1);
 
-  const nextSlide = () => {
-    goToSlide(currentSlide + 1);
-  };
+  if (sliderNext) sliderNext.addEventListener('click', () => { nextSlide(); restartAutoPlay(); });
+  if (sliderPrev) sliderPrev.addEventListener('click', () => { prevSlide(); restartAutoPlay(); });
 
-  const prevSlide = () => {
-    goToSlide(currentSlide - 1);
-  };
-
-  if (sliderNext) {
-    sliderNext.addEventListener('click', () => {
-      nextSlide();
-      restartAutoPlay();
-    });
-  }
-
-  if (sliderPrev) {
-    sliderPrev.addEventListener('click', () => {
-      prevSlide();
-      restartAutoPlay();
-    });
-  }
-
-  // Animation de la barre de progression
   const startProgressBar = () => {
     if (!sliderProgressBar) return;
     sliderProgressBar.style.width = '0%';
     progressStartTime = Date.now();
-
     clearInterval(progressInterval);
     progressInterval = setInterval(() => {
       const elapsed = Date.now() - progressStartTime;
       const percentage = Math.min((elapsed / SLIDE_DURATION) * 100, 100);
       sliderProgressBar.style.width = `${percentage}%`;
-
-      if (percentage >= 100) {
-        clearInterval(progressInterval);
-      }
+      if (percentage >= 100) clearInterval(progressInterval);
     }, 50);
   };
-
-  const resetProgressBar = () => {
-    clearInterval(progressInterval);
-    startProgressBar();
-  };
+  const resetProgressBar = () => { clearInterval(progressInterval); startProgressBar(); };
 
   const startAutoPlay = () => {
     stopAutoPlay();
     startProgressBar();
-    slideTimer = setInterval(() => {
-      nextSlide();
-    }, SLIDE_DURATION);
+    slideTimer = setInterval(() => { nextSlide(); }, SLIDE_DURATION);
   };
-
   const stopAutoPlay = () => {
     if (slideTimer) clearInterval(slideTimer);
     if (progressInterval) clearInterval(progressInterval);
   };
+  const restartAutoPlay = () => { stopAutoPlay(); startAutoPlay(); };
 
-  const restartAutoPlay = () => {
-    stopAutoPlay();
-    startAutoPlay();
-  };
-
-  // Pause au survol du slider
   if (sliderTrack) {
     sliderTrack.addEventListener('mouseenter', stopAutoPlay);
     sliderTrack.addEventListener('mouseleave', startAutoPlay);
 
-    // Support Swipe tactile pour mobile
     let touchStartX = 0;
     let touchEndX = 0;
 
@@ -271,35 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleSwipe = () => {
       const swipeDistance = touchEndX - touchStartX;
       if (Math.abs(swipeDistance) > 45) {
-        if (swipeDistance < 0) {
-          nextSlide(); // Balayage vers la gauche -> suivant
-        } else {
-          prevSlide(); // Balayage vers la droite -> précédent
-        }
+        if (swipeDistance < 0) nextSlide();
+        else prevSlide();
       }
     };
   }
 
-  // Lancement initial du carrousel
-  if (totalSlides > 0) {
-    startAutoPlay();
-  }
+  if (totalSlides > 0) startAutoPlay();
 
-  /* ------------------------------------------------------------------------
-     6. COMPTEUR DE STATISTIQUES ANIMÉ
-     ------------------------------------------------------------------------ */
+  /* 6. COMPTEURS ANIMÉS */
   const statNumbers = document.querySelectorAll('.stat-number');
   let statsCounted = false;
 
   const runCounterAnimation = () => {
     statNumbers.forEach(stat => {
       const target = parseInt(stat.getAttribute('data-target'), 10);
-      const duration = 2000; // 2 secondes
+      const duration = 2000;
       const stepTime = 30;
-      const totalSteps = duration / stepTime;
-      const increment = target / totalSteps;
+      const increment = target / (duration / stepTime);
       let currentVal = 0;
-
       const counterInterval = setInterval(() => {
         currentVal += increment;
         if (currentVal >= target) {
@@ -323,13 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }, { threshold: 0.3 });
-
     statsObserver.observe(statsSection);
   }
 
-  /* ------------------------------------------------------------------------
-     7. ANIMATION D'APPARITION AU SCROLL (SCROLL REVEAL)
-     ------------------------------------------------------------------------ */
+  /* 7. APPARITION AU SCROLL */
   const reveals = document.querySelectorAll('.reveal-on-scroll');
 
   if ('IntersectionObserver' in window) {
@@ -340,20 +239,13 @@ document.addEventListener('DOMContentLoaded', () => {
           observer.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
-    });
-
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach(el => revealObserver.observe(el));
   } else {
-    // Fallback pour anciens navigateurs
     reveals.forEach(el => el.classList.add('revealed'));
   }
 
-  /* ------------------------------------------------------------------------
-     8. SECTION "NOS PRODIGES" (GESTION DES VIDÉOS LOCALES)
-     ------------------------------------------------------------------------ */
+  /* 8. VIDÉOS PRODIGES */
   const prodigeVideos = document.querySelectorAll('.prodige-video');
   const videoPlayBtns = document.querySelectorAll('.video-play-btn');
   const videoToggleBtns = document.querySelectorAll('.video-toggle-btn');
@@ -361,12 +253,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleVideoPlayback = (videoId) => {
     const video = document.getElementById(videoId);
     if (!video) return;
-
     const playBtn = document.querySelector(`.video-play-btn[data-video="${videoId}"]`);
     const toggleBtn = document.querySelector(`.video-toggle-btn[data-video="${videoId}"]`);
 
     if (video.paused) {
-      // Mettre en pause toutes les autres vidéos d'abord
       prodigeVideos.forEach(v => {
         if (v !== video) {
           v.pause();
@@ -374,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (otherPlayBtn) otherPlayBtn.classList.remove('playing');
         }
       });
-
       video.play().then(() => {
         video.controls = true;
         if (playBtn) playBtn.classList.add('playing');
@@ -390,17 +279,10 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   videoPlayBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const videoId = btn.getAttribute('data-video');
-      toggleVideoPlayback(videoId);
-    });
+    btn.addEventListener('click', () => toggleVideoPlayback(btn.getAttribute('data-video')));
   });
-
   videoToggleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const videoId = btn.getAttribute('data-video');
-      toggleVideoPlayback(videoId);
-    });
+    btn.addEventListener('click', () => toggleVideoPlayback(btn.getAttribute('data-video')));
   });
 
   prodigeVideos.forEach(video => {
@@ -411,21 +293,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (toggleBtn) toggleBtn.querySelector('span').textContent = 'Revoir la vidéo';
       video.controls = false;
     });
-
     video.addEventListener('pause', () => {
       const playBtn = document.querySelector(`.video-play-btn[data-video="${video.id}"]`);
       if (playBtn) playBtn.classList.remove('playing');
     });
-
     video.addEventListener('play', () => {
       const playBtn = document.querySelector(`.video-play-btn[data-video="${video.id}"]`);
       if (playBtn) playBtn.classList.add('playing');
     });
   });
 
-  /* ------------------------------------------------------------------------
-     9. FOIRE AUX QUESTIONS (FAQ INTERACTIVE ACCORDÉON)
-     ------------------------------------------------------------------------ */
+  /* 9. FAQ ACCORDÉON */
   const faqItems = document.querySelectorAll('.faq-item');
 
   faqItems.forEach(item => {
@@ -436,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
       questionBtn.addEventListener('click', () => {
         const isOpen = item.classList.contains('active');
 
-        // Fermer les autres items pour un affichage propre
         faqItems.forEach(otherItem => {
           if (otherItem !== item && otherItem.classList.contains('active')) {
             otherItem.classList.remove('active');
@@ -447,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
 
-        // Basculer l'item courant
         if (isOpen) {
           item.classList.remove('active');
           questionBtn.setAttribute('aria-expanded', 'false');
@@ -461,9 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* ------------------------------------------------------------------------
-     10. POP-UP MODAL WHATSAPP INTERACTIF
-     ------------------------------------------------------------------------ */
+  /* 10. MODAL WHATSAPP */
   const whatsappModal = document.getElementById('whatsappModal');
   const modalClose = document.getElementById('modalClose');
   const openModalButtons = document.querySelectorAll('.open-whatsapp-modal');
@@ -473,65 +347,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const openWhatsAppModal = (customSubject = '') => {
     if (!whatsappModal) return;
-
     if (customSubject && whatsappMessageInput) {
       whatsappMessageInput.value = `Bonjour, je prends contact avec l'École DS DABO concernant : ${customSubject}. Pouvez-vous me renseigner ?`;
-      
-      // Désactiver la sélection des puces prédéfinies
       topicChips.forEach(chip => chip.classList.remove('active'));
     }
-
-    if (typeof whatsappModal.showModal === 'function') {
-      whatsappModal.showModal();
-    } else {
-      // Fallback
-      whatsappModal.setAttribute('open', '');
-    }
+    if (typeof whatsappModal.showModal === 'function') whatsappModal.showModal();
+    else whatsappModal.setAttribute('open', '');
   };
 
   const closeWhatsAppModal = () => {
     if (!whatsappModal) return;
-    if (typeof whatsappModal.close === 'function') {
-      whatsappModal.close();
-    } else {
-      whatsappModal.removeAttribute('open');
-    }
+    if (typeof whatsappModal.close === 'function') whatsappModal.close();
+    else whatsappModal.removeAttribute('open');
   };
 
   openModalButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const subject = btn.getAttribute('data-subject') || '';
-      openWhatsAppModal(subject);
+      openWhatsAppModal(btn.getAttribute('data-subject') || '');
     });
   });
 
-  if (modalClose) {
-    modalClose.addEventListener('click', closeWhatsAppModal);
-  }
+  if (modalClose) modalClose.addEventListener('click', closeWhatsAppModal);
 
-  // Fermer le modal en cliquant sur le fond (backdrop)
   if (whatsappModal) {
     whatsappModal.addEventListener('click', (e) => {
       const rect = whatsappModal.getBoundingClientRect();
       const isInDialog = (
-        rect.top <= e.clientY &&
-        e.clientY <= rect.top + rect.height &&
-        rect.left <= e.clientX &&
-        e.clientX <= rect.left + rect.width
+        rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+        rect.left <= e.clientX && e.clientX <= rect.left + rect.width
       );
-      if (!isInDialog) {
-        closeWhatsAppModal();
-      }
+      if (!isInDialog) closeWhatsAppModal();
     });
   }
 
-  // Puces de sujets prédéfinis
   topicChips.forEach(chip => {
     chip.addEventListener('click', () => {
       topicChips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-
       const presetMsg = chip.getAttribute('data-msg');
       if (whatsappMessageInput && presetMsg) {
         whatsappMessageInput.value = presetMsg;
@@ -540,25 +393,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Soumission du formulaire WhatsApp
   if (whatsappForm) {
     whatsappForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const messageText = whatsappMessageInput ? whatsappMessageInput.value.trim() : '';
-
       const fallbackMsg = "Bonjour, je souhaite avoir des informations sur l'École DS DABO.";
       const finalMessage = messageText.length > 0 ? messageText : fallbackMsg;
-
-      // Construction de l'URL WhatsApp avec le numéro malien officiel
-      const encodedMsg = encodeURIComponent(finalMessage);
-      const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodedMsg}`;
-
-      // Ouvrir WhatsApp dans un nouvel onglet
+      const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(finalMessage)}`;
       window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-
-      // Fermer le modal
       closeWhatsAppModal();
     });
+  }
+
+  /* 11. CARROUSEL HORIZONTAL DES AVIS */
+  const revTrack = document.getElementById('reviewsTrack');
+  const revPrev = document.getElementById('revPrev');
+  const revNext = document.getElementById('revNext');
+
+  if (revTrack) {
+    const revCards = revTrack.querySelectorAll('.review-card');
+    let revTimer = null;
+    const revStep = () => (revCards[0] ? revCards[0].offsetWidth + 24 : 300);
+
+    const revGoNext = () => {
+      if (revTrack.scrollLeft + revTrack.clientWidth >= revTrack.scrollWidth - 5) {
+        revTrack.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        revTrack.scrollBy({ left: revStep(), behavior: 'smooth' });
+      }
+    };
+    const revGoPrev = () => {
+      if (revTrack.scrollLeft <= 5) {
+        revTrack.scrollTo({ left: revTrack.scrollWidth, behavior: 'smooth' });
+      } else {
+        revTrack.scrollBy({ left: -revStep(), behavior: 'smooth' });
+      }
+    };
+    const revStart = () => { clearInterval(revTimer); revTimer = setInterval(revGoNext, 4500); };
+    const revStop = () => clearInterval(revTimer);
+
+    if (revNext) revNext.addEventListener('click', () => { revGoNext(); revStart(); });
+    if (revPrev) revPrev.addEventListener('click', () => { revGoPrev(); revStart(); });
+    revTrack.addEventListener('mouseenter', revStop);
+    revTrack.addEventListener('mouseleave', revStart);
+    revTrack.addEventListener('touchstart', revStop, { passive: true });
+    revTrack.addEventListener('touchend', revStart, { passive: true });
+    revStart();
   }
 
 });
